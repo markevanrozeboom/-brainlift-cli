@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 from setuptools import setup, find_packages
+import os
+
+# Read the long description from README.md
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
+    long_description = f.read()
 
 setup(
-    name="brainlift-cli",
-    version="0.1.0",
-    description="BrainLift CLI - A command-line interface for the BrainLift knowledge management system",
+    name="brainlift",
+    version="0.2.0",
+    description="BrainLift Manager (BLM) - A command-line interface for the BrainLift knowledge management system",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Trilogy Group",
     author_email="info@trilogy.com",
+    url="https://github.com/trilogy-group/-brainlift-cli",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -15,7 +23,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "blm=blm:main",
+            "blm=blm.cli:main",
         ],
     },
     classifiers=[
@@ -26,5 +34,10 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Topic :: Utilities",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
+    keywords="brainlift, knowledge management, cli, ai, vector search",
+    python_requires=">=3.7",
 )
