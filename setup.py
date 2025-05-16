@@ -8,7 +8,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setup(
     name="brainlift",
-    version="0.2.0",
+    version="0.3.0",
     description="BrainLift Manager (BLM) - A command-line interface for the BrainLift knowledge management system",
     long_description=long_description,
     long_description_content_type="text/markdown",

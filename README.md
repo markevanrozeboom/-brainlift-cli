@@ -23,20 +23,24 @@ pip install -e .
 
 ## ⚙️ Configuration
 
-After installation, configure the CLI with your API endpoint and key:
+After installation, configure the CLI with your API key:
 
 ```bash
 blm configure
 ```
 
-This interactive command will prompt you for:
-- BrainLift function URL
-- API key
+This interactive command will prompt you for your API key. The BrainLift function URL is pre-configured to the production endpoint by default.
 
-Alternatively, you can provide these values directly:
+Alternatively, you can provide the API key directly:
 
 ```bash
-blm configure --function-url https://your-lambda-function-url.lambda-url.region.on.aws/ --api-key your-api-key
+blm configure --api-key your-api-key
+```
+
+If you need to use a different function URL (for development or testing), you can specify it:
+
+```bash
+blm configure --api-key your-api-key --function-url https://your-custom-function-url.lambda-url.region.on.aws/
 ```
 
 Configuration is stored in `~/.brain-lift/config` and can be updated at any time by running the configure command again.
@@ -46,11 +50,14 @@ Configuration is stored in `~/.brain-lift/config` and can be updated at any time
 ### Configure
 
 ```bash
-# Interactive configuration
+# Interactive configuration (prompts for API key)
 blm configure
 
-# Direct configuration with parameters
-blm configure --function-url <url> --api-key <key>
+# Direct configuration with API key
+blm configure --api-key <key>
+
+# Optional: Specify custom function URL (for development/testing)
+blm configure --api-key <key> --function-url <custom-url>
 ```
 
 ### List Content

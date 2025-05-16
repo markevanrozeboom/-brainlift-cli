@@ -235,25 +235,29 @@ def delete_content(args):
         return 1
 
 def configure(args):
-    """Configure BrainLift CLI with function URL and API key"""
+    """Configure BrainLift CLI with API key (and optionally function URL)"""
     try:
         import getpass
         from blm.client import configure_serverless
         
-        # If arguments are provided, use them
+        # Hard-coded default endpoint
+        default_url = "https://d4ybbghltmaer5icfjqm2wyxyu0osxmf.lambda-url.us-east-1.on.aws/"
+        
+        # If function URL is provided, use it, otherwise use the default
         if hasattr(args, 'function_url') and args.function_url:
             function_url = args.function_url
         else:
-            # Otherwise prompt for input
-            default_url = "https://d4ybbghltmaer5icfjqm2wyxyu0osxmf.lambda-url.us-east-1.on.aws/"
-            function_url = input(f"Enter BrainLift function URL [{default_url}]: ") or default_url
+            function_url = default_url
         
+        # Get API key from args or prompt
         if hasattr(args, 'api_key') and args.api_key:
             api_key = args.api_key
         else:
-            # Otherwise prompt for input
-            default_key = "58db6d281cad974b57fe685f6b29f3ac"
-            api_key = getpass.getpass(f"Enter BrainLift API key (press Enter for default): ") or default_key
+            # Prompt for API key
+            api_key = getpass.getpass("Enter your BrainLift API key: ")
+            if not api_key:
+                logger.error("API key is required")
+                return 1
         
         configure_serverless(function_url, api_key)
         print(f"✅ BrainLift CLI configured successfully!")
@@ -452,9 +456,9 @@ def main():
     generate_content_group.add_argument('--content', help='Direct content input as a string')
     
     # Configure command
-    configure_parser = subparsers.add_parser('configure', help='Configure BrainLift CLI with API endpoint and key')
-    configure_parser.add_argument('--function-url', help='Lambda function URL (optional, will prompt if not provided)')
-    configure_parser.add_argument('--api-key', help='API key for authentication (optional, will prompt if not provided)')
+    configure_parser = subparsers.add_parser('configure', help='Configure BrainLift CLI with API key')
+    configure_parser.add_argument('--api-key', help='API key for authentication (required if not provided interactively)')
+    configure_parser.add_argument('--function-url', help='Lambda function URL (optional, defaults to production endpoint)')
     
     # Parse arguments
     args = parser.parse_args()
