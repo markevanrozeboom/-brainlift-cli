@@ -1,30 +1,57 @@
 # BrainLift CLI
 
-A command-line interface for the BrainLift knowledge management system. This CLI tool allows you to interact with the BrainLift serverless backend to manage, search, and generate structured knowledge content.
+[![PyPI version](https://badge.fury.io/py/brainlift.svg)](https://badge.fury.io/py/brainlift)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Installation
+A powerful command-line interface for the BrainLift knowledge management system. This CLI tool allows you to interact with the BrainLift serverless backend to manage, search, and generate structured knowledge content.
+
+## 🚀 Installation
+
+### Install from PyPI
 
 ```bash
-# Install from source
+pip install brainlift
+```
+
+### Install from Source
+
+```bash
+git clone https://github.com/trilogy-group/-brainlift-cli.git
+cd -brainlift-cli
 pip install -e .
 ```
 
-### Environment Setup
+## ⚙️ Configuration
 
-Create a `.env` file in your home directory at `~/.brain-lift/.env` with the following variables:
-
-```bash
-BRAINLIFT_FUNCTION_URL=your_lambda_function_url
-BRAINLIFT_API_KEY=your_api_key
-```
-
-Alternatively, you can use the `configure-serverless` command to set these values:
+After installation, configure the CLI with your API endpoint and key:
 
 ```bash
-blm configure-serverless --function-url https://your-lambda-function-url.lambda-url.region.on.aws/ --api-key your-api-key
+blm configure
 ```
 
-## Commands
+This interactive command will prompt you for:
+- BrainLift function URL
+- API key
+
+Alternatively, you can provide these values directly:
+
+```bash
+blm configure --function-url https://your-lambda-function-url.lambda-url.region.on.aws/ --api-key your-api-key
+```
+
+Configuration is stored in `~/.brain-lift/config` and can be updated at any time by running the configure command again.
+
+## 🛠️ Commands
+
+### Configure
+
+```bash
+# Interactive configuration
+blm configure
+
+# Direct configuration with parameters
+blm configure --function-url <url> --api-key <key>
+```
 
 ### List Content
 
@@ -60,6 +87,9 @@ blm get --product <product> --topic <topic>
 
 # Get specific section
 blm get --product <product> --topic <topic> --section <section>
+
+# Get content in JSON format
+blm get --product <product> --topic <topic> --format json
 ```
 
 ### Import Content
@@ -72,59 +102,108 @@ blm import <file.md> --product <product> --topic <topic>
 ### Update Content
 
 ```bash
-# Update content
+# Update content from a file
 blm update --product <product> --topic <topic> --file <file.md>
+
+# Update with direct content input
+blm update --product <product> --topic <topic> --content "Your content here"
 ```
 
 ### Delete Content
 
 ```bash
-# Delete content
+# Delete a topic
 blm delete --product <product> --topic <topic>
+
+# Delete a specific section
+blm delete --product <product> --topic <topic> --section <section>
 ```
 
 ### Generate Content
 
 ```bash
-# Generate structured content from raw input
+# Generate structured content from a file and save it to the system
 blm generate --product <product> --topic <topic> --file <file.md>
+
+# Generate from direct content input
+blm generate --product <product> --topic <topic> --content "Your content here"
 
 # Specify template version
 blm generate --product <product> --topic <topic> --file <file.md> -v v3
 ```
 
-### Content Generation Guidelines
+## 📖 Content Generation Guidelines
 
 When using the `generate` command, the system follows these principles:
 
-1. **Factual Accuracy**: The system prioritizes factual accuracy over filling every template section. All content must be derived from the source material.
+1. **Factual Accuracy** ✨
+   - Prioritizes factual accuracy over filling every template section
+   - All content must be derived from the source material
+   - Empty sections are preferred over fabricated information
 
-2. **DOK Structure**:
-   - **DOK1 and DOK2**: Function as context packs containing factual information and foundational knowledge directly from the source material.
-   - **DOK3 and DOK4**: Higher-level insights are only included when they can be genuinely derived from the content, not invented.
+2. **DOK Structure** 📊
+   - **DOK1**: Raw facts directly from the source material
+   - **DOK2**: Foundational knowledge and summaries based on facts
+   - **DOK3**: Insights and patterns derived from the content (only when genuinely present)
+   - **DOK4**: High-level perspectives and strategic viewpoints (only when supported by content)
 
-3. **Experts Section**: Only includes people or sources that are explicitly mentioned in the original content. If no experts are explicitly mentioned, this section should remain empty or be omitted.
+3. **Experts Section** 👨‍🏫
+   - Only includes people or sources explicitly mentioned in the original content
+   - If no experts are mentioned, this section remains empty or is omitted
+   - Never invents expert names or credentials
 
-4. **Purpose Section**: Clearly defines what the content is about - the core objective or focus of the material.
+4. **Purpose Section** 🎨
+   - Clearly defines the core objective or focus of the material
+   - Captures the essence of what the content is about
+   - Based on explicit statements in the content
 
-5. **Template Flexibility**: The template structure respects what's actually in the content rather than forcing information into categories where it doesn't exist in the source material.
+5. **Template Flexibility** 🔍
+   - Respects what's actually in the content rather than forcing information into categories
+   - Adapts to the natural structure of the source material
+   - Maintains integrity of the original information
 
-## Verbose Mode
+## 🔎 Verbose Mode
 
 Add the `--verbose` flag to get more detailed output:
 
 ```bash
+# Informational logging
 blm --verbose INFO list
+
+# Debug-level logging with detailed API interactions
 blm --verbose DEBUG generate --product <product> --topic <topic> --file <file.md>
 ```
 
-## Development
+## 👷 Development
 
-This CLI is a thin wrapper around the BrainLift serverless backend. It handles:
+This CLI is designed as a thin wrapper around the BrainLift serverless backend, following a clean separation of concerns:
 
-1. Command-line argument parsing
-2. File I/O for content import/export
-3. API calls to the serverless backend
-4. Formatting and displaying results
+### Client-Side Responsibilities
 
-All business logic, content processing, and storage operations are handled by the serverless backend.
+1. **Command-line Interface**: Parsing arguments and providing a user-friendly experience
+2. **File I/O**: Reading from and writing to local files
+3. **API Communication**: Making HTTP requests to the serverless backend
+4. **Output Formatting**: Presenting results in a readable format
+
+### Server-Side Responsibilities
+
+1. **Business Logic**: All algorithmic processing of content
+2. **Storage Operations**: Saving and retrieving content from S3
+3. **Vector Indexing**: Managing the vector database for semantic search
+4. **Content Generation**: Using AI to transform raw content into structured knowledge
+
+### Architecture
+
+The CLI follows a modular design with these key components:
+
+- **CLI Module**: Command parsing and execution logic
+- **Client Module**: API communication and authentication
+- **Configuration**: Managing API endpoints and credentials
+
+## 👏 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📜 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
